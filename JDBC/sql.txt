@@ -1,0 +1,87 @@
+-- select * from eee;
+-- create or replace function add(a int, b int)
+-- returns int
+-- as 
+-- $$
+-- declare sum int;
+-- begin
+-- 	select a+b into sum;
+-- 	return sum;
+-- end;
+-- $$
+-- language plpgsql;
+-- select add(2,3);
+
+
+-- create or replace function set_age(i_age int)
+-- returns int
+-- as 
+-- $$
+-- begin
+-- 	update eee set eeage = eeage+i_age;
+-- 	return (select count(eeid) from eee);
+-- end;
+-- $$
+-- language plpgsql;
+-- select set_age(2);
+
+
+
+
+
+-- create or replace function set_age2(i_age int)
+-- returns setof eee
+-- as 
+-- $$
+-- begin
+-- 	update eee set eeage = eeage+i_age;
+-- 	return query select * from eee;
+-- end;
+-- $$
+-- language plpgsql;
+-- select set_age(2);
+
+
+-- create function swap(ida int, idb int)
+-- returns text
+-- as 
+-- $$
+-- declare dep_a int;
+-- declare dep_b int;
+-- begin
+-- 	select dep_id into dep_a from eee where eeid=ida;
+-- 	if not found then
+-- 		return 'Examinee A does not exist;';
+-- 	end if;
+-- 	select dep_id into dep_b from eee where eeid=idb;
+-- 	if not found then 
+-- 		return 'Examinee B does not exist;';
+-- 	end if;
+	
+-- 	update eee set dep_id=dep_b where eeid=ida;
+-- 	update eee set dep_id=dep_a where eeid=idb;
+-- 	return 'Operation success;';
+-- end;
+-- $$
+-- language plpgsql;
+-- select swap(1,2);
+
+
+
+create or replace function sele()
+returns table(did int, age numeric)
+as
+$$
+begin
+	return query (with tt(did, avg_age) as (select
+	dep_id, avg(eeage) from eee group by dep_id)
+	select * from tt where avg_age = (select 
+	max(avg_age) from tt));
+end;
+$$
+language plpgsql;
+select * from sele();
+
+
+
+
